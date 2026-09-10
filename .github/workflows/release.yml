@@ -1,9 +1,18 @@
 name: Release archive
+
 on:
   push:
     tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing GitHub release tag to upload the package to
+        required: true
+        default: v0.1.0
+
 permissions:
   contents: write
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -19,7 +28,15 @@ jobs:
       - run: npm test
       - run: npm run test:package
       - run: npm pack
-      - name: Attach package to GitHub release
+      - name: Create or update GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" ./*.tgz --generate-notes
+          RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release upload "$RELEASE_TAG" ./*.tgz --clobber
+          else
+            gh release create "$RELEASE_TAG" ./*.tgz --generate-notes --prerelease
+          fi
