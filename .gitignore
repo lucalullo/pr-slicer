@@ -1,0 +1,16 @@
+node_modules/
+dist/
+coverage/
+releases/
+.demo/
+.cache/
+*.tgz
+*.zip
+*.log
+.DS_Store
+Thumbs.db
+.env
+.env.*
+!.env.example
+.pr-slicer.json
+.pr-slicer.jsonc

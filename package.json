@@ -1,0 +1,62 @@
+{
+  "name": "pr-slicer",
+  "version": "0.1.0",
+  "description": "Split oversized JavaScript/TypeScript Git changes into deterministic, dependency-aware stacks — locally, without AI.",
+  "keywords": [
+    "git",
+    "pull-request",
+    "stacked-pull-requests",
+    "code-review",
+    "developer-tools",
+    "typescript",
+    "javascript",
+    "cli",
+    "offline"
+  ],
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "bin": {
+    "pr-slicer": "dist/cli/main.js"
+  },
+  "exports": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts",
+    "dist/config/schema.json",
+    "dist/core/plan-schema.json",
+    "src/config/schema.json",
+    "README.md",
+    "LICENSE",
+    "src/core/plan-schema.json"
+  ],
+  "scripts": {
+    "build": "node node_modules/typescript/bin/tsc -p tsconfig.json",
+    "typecheck": "node node_modules/typescript/bin/tsc -p tsconfig.json --noEmit",
+    "test": "npm run build && node --test --test-concurrency=2 test/unit/*.test.mjs test/integration/*.test.mjs",
+    "test:unit": "npm run build && node --test test/unit/*.test.mjs",
+    "test:package": "npm run build && node --test test/packaging/*.test.mjs",
+    "benchmark": "npm run build && node scripts/benchmark.mjs",
+    "demo": "npm run build && node scripts/demo.mjs",
+    "prepack": "npm run build",
+    "golden:update": "npm run build && node scripts/update-goldens.mjs"
+  },
+  "dependencies": {
+    "typescript": "5.9.3"
+  },
+  "devDependencies": {
+    "@types/node": "22.19.11"
+  },
+  "author": "Luca Lullo",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lucalullo/pr-slicer.git"
+  },
+  "homepage": "https://github.com/lucalullo/pr-slicer#readme",
+  "bugs": {
+    "url": "https://github.com/lucalullo/pr-slicer/issues"
+  }
+}

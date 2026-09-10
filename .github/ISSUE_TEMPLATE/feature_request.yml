@@ -1,0 +1,24 @@
+name: Feature request
+description: Propose a focused improvement that preserves PR Slicer's local and deterministic model.
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What concrete workflow problem should PR Slicer solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Describe the smallest useful behavior change.
+    validations:
+      required: true
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Constraints or examples
+      description: Add examples, edge cases, or compatibility concerns.

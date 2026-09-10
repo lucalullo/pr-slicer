@@ -1,0 +1,8 @@
+{
+  "$schema": "./src/config/schema.json", "schemaVersion": 1, "base": "main", "head": "HEAD",
+  "limits": { "maxGroups": 5, "targetChangedLines": 350, "hardMaxChangedLines": 800, "targetFiles": 12, "hardMaxFiles": 30 },
+  "areas": [ { "name": "Core", "patterns": ["src/core/**", "src/git/**"] }, { "name": "CLI", "patterns": ["src/cli/**", "src/report/**"] } ],
+  "relations": { "keepTestsWithImplementation": true, "generatedFrom": [] },
+  "checks": [ { "name": "build", "command": "node", "args": ["node_modules/typescript/bin/tsc", "--noEmit", "-p", "tsconfig.json"], "timeoutMs": 300000 } ],
+  "environment": { "inherit": false, "allow": ["CI"] }
+}

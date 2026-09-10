@@ -1,0 +1,301 @@
+{
+  "schemaVersion": 1,
+  "toolVersion": "0.1.0",
+  "repository": {
+    "root": "<REPO>",
+    "gitDir": "<REPO>/.git",
+    "commonDir": "<REPO>/.git",
+    "objectFormat": "sha1",
+    "baseRef": "main",
+    "headRef": "feature",
+    "baseOid": "ba3c508aee22a95397d6b3616bbce9f5e84ef2ab",
+    "headOid": "dac29bea70bc05f45177615ec6b1f21f6322f46e",
+    "mergeBaseOid": "ba3c508aee22a95397d6b3616bbce9f5e84ef2ab",
+    "baseTreeOid": "756e7148402fe3513cc0c38674790bb190ef506c",
+    "headTreeOid": "ba3fb7f37d8cccd0ed9db333320fa91fa94d8ca5"
+  },
+  "config": {
+    "schemaVersion": 1,
+    "base": "main",
+    "head": "HEAD",
+    "language": "typescript",
+    "limits": {
+      "maxGroups": 5,
+      "targetChangedLines": 2,
+      "hardMaxChangedLines": 100,
+      "targetFiles": 12,
+      "hardMaxFiles": 30,
+      "maxAnalysisFiles": 1500,
+      "maxFileBytes": 2097152
+    },
+    "paths": {
+      "include": [
+        "**/*.ts",
+        "**/*.tsx",
+        "**/*.js",
+        "**/*.jsx",
+        "**/*.mts",
+        "**/*.cts",
+        "**/*.mjs",
+        "**/*.cjs"
+      ],
+      "exclude": [
+        "**/dist/**",
+        "**/coverage/**",
+        "**/*.min.js"
+      ]
+    },
+    "relations": {
+      "keepTestsWithImplementation": true,
+      "testPatterns": [
+        "**/*.test.*",
+        "**/*.spec.*",
+        "**/__tests__/**"
+      ],
+      "generatedPatterns": [
+        "**/*.generated.*",
+        "**/generated/**"
+      ],
+      "generatedFrom": []
+    },
+    "areas": [],
+    "checks": [],
+    "environment": {
+      "inherit": false,
+      "allow": [
+        "CI"
+      ]
+    }
+  },
+  "analysisMode": "deep",
+  "status": "single-change",
+  "files": [
+    {
+      "id": "f_156571b575c3b13b",
+      "oldPath": "a.ts",
+      "newPath": "a.ts",
+      "oldOid": "18795c5e1efa801e5ffaca6873b020d84b0b1d19",
+      "newOid": "4b44f31f4e1794bd43530f9d5fca03585b4a1f8b",
+      "oldMode": "100644",
+      "newMode": "100644",
+      "changeKind": "modify",
+      "hunks": [
+        {
+          "id": "h_fea9578311238bec",
+          "oldPath": "a.ts",
+          "newPath": "a.ts",
+          "oldRange": {
+            "start": 1,
+            "count": 1
+          },
+          "newRange": {
+            "start": 1,
+            "count": 1
+          },
+          "lines": [
+            "-export function api(x: number) { return x; }",
+            "+export function api(x: string) { return x; }"
+          ],
+          "binary": false
+        }
+      ],
+      "atomic": false,
+      "addedLines": 1,
+      "deletedLines": 1
+    },
+    {
+      "id": "f_d6226f6927e832ec",
+      "oldPath": "b.ts",
+      "newPath": "b.ts",
+      "oldOid": "b0b455e81b3e24d4541731abc3ee01e79ca0d1ba",
+      "newOid": "dee5026be13235fb6c4a15fcd690ce7dbd8707b1",
+      "oldMode": "100644",
+      "newMode": "100644",
+      "changeKind": "modify",
+      "hunks": [
+        {
+          "id": "h_95488d995d5201cd",
+          "oldPath": "b.ts",
+          "newPath": "b.ts",
+          "oldRange": {
+            "start": 2,
+            "count": 1
+          },
+          "newRange": {
+            "start": 2,
+            "count": 1
+          },
+          "lines": [
+            "-export const b=api(1);",
+            "+export const b=api(\"ok\");"
+          ],
+          "binary": false
+        }
+      ],
+      "atomic": false,
+      "addedLines": 1,
+      "deletedLines": 1
+    }
+  ],
+  "units": [
+    {
+      "id": "cu_6cc26faa25b9d36b",
+      "fileId": "f_156571b575c3b13b",
+      "changeKind": "modify",
+      "syntaxKind": "function",
+      "oldPath": "a.ts",
+      "newPath": "a.ts",
+      "hunkIds": [
+        "h_fea9578311238bec"
+      ],
+      "symbolIds": [
+        "a.ts#api"
+      ],
+      "packageId": null,
+      "area": null,
+      "addedLines": 1,
+      "deletedLines": 1,
+      "isTest": false,
+      "isGenerated": false,
+      "isAtomic": false
+    },
+    {
+      "id": "cu_a6e9cb25d697e624",
+      "fileId": "f_d6226f6927e832ec",
+      "changeKind": "modify",
+      "syntaxKind": "module",
+      "oldPath": "b.ts",
+      "newPath": "b.ts",
+      "hunkIds": [
+        "h_95488d995d5201cd"
+      ],
+      "symbolIds": [
+        "b.ts#b"
+      ],
+      "packageId": null,
+      "area": null,
+      "addedLines": 1,
+      "deletedLines": 1,
+      "isTest": false,
+      "isGenerated": false,
+      "isAtomic": false
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge_29a954d087504cef",
+      "from": "cu_6cc26faa25b9d36b",
+      "to": "cu_a6e9cb25d697e624",
+      "kind": "must_with",
+      "weight": 100,
+      "evidence": [
+        {
+          "type": "incompatible-signature-change",
+          "message": "a.ts#api changes its signature; affected changed consumers remain in the same slice.",
+          "symbol": "a.ts#api",
+          "paths": [
+            "a.ts",
+            "b.ts"
+          ]
+        }
+      ]
+    }
+  ],
+  "groups": [
+    {
+      "id": "slice_b578ebd8f83278af",
+      "title": "Aggiorna a.ts (2 file)",
+      "unitIds": [
+        "cu_6cc26faa25b9d36b",
+        "cu_a6e9cb25d697e624"
+      ],
+      "dependsOn": [],
+      "files": [
+        "a.ts",
+        "b.ts"
+      ],
+      "addedLines": 2,
+      "deletedLines": 2,
+      "reasons": [
+        {
+          "type": "incompatible-signature-change",
+          "message": "a.ts#api changes its signature; affected changed consumers remain in the same slice.",
+          "symbol": "a.ts#api",
+          "paths": [
+            "a.ts",
+            "b.ts"
+          ]
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "id": "candidate_0605800ca1cb7efd",
+      "groups": [
+        {
+          "id": "slice_b578ebd8f83278af",
+          "title": "Aggiorna a.ts (2 file)",
+          "unitIds": [
+            "cu_6cc26faa25b9d36b",
+            "cu_a6e9cb25d697e624"
+          ],
+          "dependsOn": [],
+          "files": [
+            "a.ts",
+            "b.ts"
+          ],
+          "addedLines": 2,
+          "deletedLines": 2,
+          "reasons": [
+            {
+              "type": "incompatible-signature-change",
+              "message": "a.ts#api changes its signature; affected changed consumers remain in the same slice.",
+              "symbol": "a.ts#api",
+              "paths": [
+                "a.ts",
+                "b.ts"
+              ]
+            }
+          ]
+        }
+      ],
+      "cost": 43,
+      "reasons": [
+        {
+          "type": "planner-cost",
+          "message": "Costo euristico: dimensione, dispersione, affinità e numero di gruppi; non è una probabilità di correttezza.",
+          "details": {
+            "order": "path",
+            "boundedDynamicProgramming": false
+          }
+        }
+      ]
+    }
+  ],
+  "checks": {},
+  "warnings": [],
+  "metrics": {
+    "reviewability": 50,
+    "structuralCohesion": 100,
+    "dependencyIntegrity": 100,
+    "boundaryConfidence": "medium",
+    "verificationCoverage": {
+      "passed": 0,
+      "total": 0
+    }
+  },
+  "verification": {
+    "status": "not-run",
+    "level": "reconstructed",
+    "digest": "",
+    "trees": [],
+    "checks": {},
+    "commandsExecuted": false
+  },
+  "integrity": {
+    "finalTreeOid": "ba3fb7f37d8cccd0ed9db333320fa91fa94d8ca5",
+    "exactReconstruction": true,
+    "digest": "b1c6f6f7d7eef3bea83c63237f84a533989c028d466548ef77b3600f29630911"
+  }
+}

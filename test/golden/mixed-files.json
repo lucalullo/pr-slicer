@@ -1,0 +1,485 @@
+{
+  "schemaVersion": 1,
+  "toolVersion": "0.1.0",
+  "repository": {
+    "root": "<REPO>",
+    "gitDir": "<REPO>/.git",
+    "commonDir": "<REPO>/.git",
+    "objectFormat": "sha1",
+    "baseRef": "main",
+    "headRef": "feature",
+    "baseOid": "3d513a422b952da4b444d6e1d21189840aff0d0d",
+    "headOid": "b9c3294458cab837a12d10a1591149f280ef01b7",
+    "mergeBaseOid": "3d513a422b952da4b444d6e1d21189840aff0d0d",
+    "baseTreeOid": "280be8f64b6236f9184542f986764f4d2be3c562",
+    "headTreeOid": "d955910222876e45794dd519ccd6bed62efb25a7"
+  },
+  "config": {
+    "schemaVersion": 1,
+    "base": "main",
+    "head": "HEAD",
+    "language": "typescript",
+    "limits": {
+      "maxGroups": 5,
+      "targetChangedLines": 2,
+      "hardMaxChangedLines": 100,
+      "targetFiles": 12,
+      "hardMaxFiles": 30,
+      "maxAnalysisFiles": 1500,
+      "maxFileBytes": 2097152
+    },
+    "paths": {
+      "include": [
+        "**/*.ts",
+        "**/*.tsx",
+        "**/*.js",
+        "**/*.jsx",
+        "**/*.mts",
+        "**/*.cts",
+        "**/*.mjs",
+        "**/*.cjs"
+      ],
+      "exclude": [
+        "**/dist/**",
+        "**/coverage/**",
+        "**/*.min.js"
+      ]
+    },
+    "relations": {
+      "keepTestsWithImplementation": true,
+      "testPatterns": [
+        "**/*.test.*",
+        "**/*.spec.*",
+        "**/__tests__/**"
+      ],
+      "generatedPatterns": [
+        "**/*.generated.*",
+        "**/generated/**"
+      ],
+      "generatedFrom": []
+    },
+    "areas": [],
+    "checks": [],
+    "environment": {
+      "inherit": false,
+      "allow": [
+        "CI"
+      ]
+    }
+  },
+  "analysisMode": "deep",
+  "status": "split-unverified",
+  "files": [
+    {
+      "id": "f_be202f40c9037fff",
+      "oldPath": "a.ts",
+      "newPath": "a.ts",
+      "oldOid": "8cfc2f235869a79f41ae2d66195262729425b88c",
+      "newOid": "645416e45bf866be3f599a5648d072f826ff8485",
+      "oldMode": "100644",
+      "newMode": "100644",
+      "changeKind": "modify",
+      "hunks": [
+        {
+          "id": "h_86d7a721949b6f64",
+          "oldPath": "a.ts",
+          "newPath": "a.ts",
+          "oldRange": {
+            "start": 1,
+            "count": 1
+          },
+          "newRange": {
+            "start": 1,
+            "count": 1
+          },
+          "lines": [
+            "-export const a=1;",
+            "+export const a=2;"
+          ],
+          "binary": false
+        }
+      ],
+      "atomic": false,
+      "addedLines": 1,
+      "deletedLines": 1
+    },
+    {
+      "id": "f_d136a864d2d37562",
+      "oldPath": "image.bin",
+      "newPath": "image.bin",
+      "oldOid": "494b1410a95b9ef0a980c33411fbf7d564472741",
+      "newOid": "566be799440d663806d0ab1f86a83f3d4373f365",
+      "oldMode": "100644",
+      "newMode": "100644",
+      "changeKind": "binary",
+      "hunks": [
+        {
+          "id": "h_15e4648ade7dd67d",
+          "oldPath": "image.bin",
+          "newPath": "image.bin",
+          "oldRange": {
+            "start": 1,
+            "count": 0
+          },
+          "newRange": {
+            "start": 1,
+            "count": 0
+          },
+          "lines": [],
+          "binary": true
+        }
+      ],
+      "atomic": true,
+      "addedLines": 0,
+      "deletedLines": 0
+    },
+    {
+      "id": "f_380d71bbcd06b02f",
+      "oldPath": null,
+      "newPath": "notes.md",
+      "oldOid": "0000000000000000000000000000000000000000",
+      "newOid": "5657d835bb8bceba521c5fb7e9343891eff9a358",
+      "oldMode": "000000",
+      "newMode": "100644",
+      "changeKind": "add",
+      "hunks": [
+        {
+          "id": "h_a4e6ee99f0565e45",
+          "oldPath": null,
+          "newPath": "notes.md",
+          "oldRange": {
+            "start": 0,
+            "count": 0
+          },
+          "newRange": {
+            "start": 1,
+            "count": 1
+          },
+          "lines": [],
+          "binary": false
+        }
+      ],
+      "atomic": true,
+      "addedLines": 1,
+      "deletedLines": 0
+    }
+  ],
+  "units": [
+    {
+      "id": "cu_0aa9ef2c05ebcb3d",
+      "fileId": "f_be202f40c9037fff",
+      "changeKind": "modify",
+      "syntaxKind": "module",
+      "oldPath": "a.ts",
+      "newPath": "a.ts",
+      "hunkIds": [
+        "h_86d7a721949b6f64"
+      ],
+      "symbolIds": [
+        "a.ts#a"
+      ],
+      "packageId": null,
+      "area": null,
+      "addedLines": 1,
+      "deletedLines": 1,
+      "isTest": false,
+      "isGenerated": false,
+      "isAtomic": false
+    },
+    {
+      "id": "cu_a18c09cdc3589b31",
+      "fileId": "f_d136a864d2d37562",
+      "changeKind": "binary",
+      "syntaxKind": "file",
+      "oldPath": "image.bin",
+      "newPath": "image.bin",
+      "hunkIds": [
+        "h_15e4648ade7dd67d"
+      ],
+      "symbolIds": [],
+      "packageId": null,
+      "area": null,
+      "addedLines": 0,
+      "deletedLines": 0,
+      "isTest": false,
+      "isGenerated": false,
+      "isAtomic": true
+    },
+    {
+      "id": "cu_b28557d6c80469ad",
+      "fileId": "f_380d71bbcd06b02f",
+      "changeKind": "add",
+      "syntaxKind": "file",
+      "oldPath": null,
+      "newPath": "notes.md",
+      "hunkIds": [
+        "h_a4e6ee99f0565e45"
+      ],
+      "symbolIds": [],
+      "packageId": null,
+      "area": null,
+      "addedLines": 1,
+      "deletedLines": 0,
+      "isTest": false,
+      "isGenerated": false,
+      "isAtomic": true
+    }
+  ],
+  "edges": [],
+  "groups": [
+    {
+      "id": "slice_0957cffa90cd427d",
+      "title": "Aggiorna a.ts",
+      "unitIds": [
+        "cu_0aa9ef2c05ebcb3d"
+      ],
+      "dependsOn": [],
+      "files": [
+        "a.ts"
+      ],
+      "addedLines": 1,
+      "deletedLines": 1,
+      "reasons": [
+        {
+          "type": "contiguous-segment",
+          "message": "Segmento contiguo di un ordine che rispetta le dipendenze note; dimensione, package, aree e affinità determinano il costo."
+        }
+      ]
+    },
+    {
+      "id": "slice_3771ec483f44b6a5",
+      "title": "Aggiorna image.bin (2 file)",
+      "unitIds": [
+        "cu_a18c09cdc3589b31",
+        "cu_b28557d6c80469ad"
+      ],
+      "dependsOn": [],
+      "files": [
+        "image.bin",
+        "notes.md"
+      ],
+      "addedLines": 1,
+      "deletedLines": 0,
+      "reasons": [
+        {
+          "type": "contiguous-segment",
+          "message": "Segmento contiguo di un ordine che rispetta le dipendenze note; dimensione, package, aree e affinità determinano il costo."
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "id": "candidate_47107f917fdd0a19",
+      "groups": [
+        {
+          "id": "slice_0957cffa90cd427d",
+          "title": "Aggiorna a.ts",
+          "unitIds": [
+            "cu_0aa9ef2c05ebcb3d"
+          ],
+          "dependsOn": [],
+          "files": [
+            "a.ts"
+          ],
+          "addedLines": 1,
+          "deletedLines": 1,
+          "reasons": [
+            {
+              "type": "contiguous-segment",
+              "message": "Segmento contiguo di un ordine che rispetta le dipendenze note; dimensione, package, aree e affinità determinano il costo."
+            }
+          ]
+        },
+        {
+          "id": "slice_3771ec483f44b6a5",
+          "title": "Aggiorna image.bin (2 file)",
+          "unitIds": [
+            "cu_a18c09cdc3589b31",
+            "cu_b28557d6c80469ad"
+          ],
+          "dependsOn": [],
+          "files": [
+            "image.bin",
+            "notes.md"
+          ],
+          "addedLines": 1,
+          "deletedLines": 0,
+          "reasons": [
+            {
+              "type": "contiguous-segment",
+              "message": "Segmento contiguo di un ordine che rispetta le dipendenze note; dimensione, package, aree e affinità determinano il costo."
+            }
+          ]
+        }
+      ],
+      "cost": 16,
+      "reasons": [
+        {
+          "type": "planner-cost",
+          "message": "Costo euristico: dimensione, dispersione, affinità e numero di gruppi; non è una probabilità di correttezza.",
+          "details": {
+            "order": "path",
+            "boundedDynamicProgramming": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "candidate_814f2bdb7220ac48",
+      "groups": [
+        {
+          "id": "slice_7023c74cd2e49a42",
+          "title": "Aggiorna a.ts (3 file)",
+          "unitIds": [
+            "cu_0aa9ef2c05ebcb3d",
+            "cu_a18c09cdc3589b31",
+            "cu_b28557d6c80469ad"
+          ],
+          "dependsOn": [],
+          "files": [
+            "a.ts",
+            "image.bin",
+            "notes.md"
+          ],
+          "addedLines": 2,
+          "deletedLines": 1,
+          "reasons": [
+            {
+              "type": "contiguous-segment",
+              "message": "Segmento contiguo di un ordine che rispetta le dipendenze note; dimensione, package, aree e affinità determinano il costo."
+            }
+          ]
+        }
+      ],
+      "cost": 16.75,
+      "reasons": [
+        {
+          "type": "planner-cost",
+          "message": "Costo euristico: dimensione, dispersione, affinità e numero di gruppi; non è una probabilità di correttezza.",
+          "details": {
+            "order": "path",
+            "boundedDynamicProgramming": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "candidate_c0780915ccfb6003",
+      "groups": [
+        {
+          "id": "slice_0957cffa90cd427d",
+          "title": "Aggiorna a.ts",
+          "unitIds": [
+            "cu_0aa9ef2c05ebcb3d"
+          ],
+          "dependsOn": [],
+          "files": [
+            "a.ts"
+          ],
+          "addedLines": 1,
+          "deletedLines": 1,
+          "reasons": [
+            {
+              "type": "contiguous-segment",
+              "message": "Segmento contiguo di un ordine che rispetta le dipendenze note; dimensione, package, aree e affinità determinano il costo."
+            }
+          ]
+        },
+        {
+          "id": "slice_2fc0528b5635866a",
+          "title": "Aggiorna image.bin",
+          "unitIds": [
+            "cu_a18c09cdc3589b31"
+          ],
+          "dependsOn": [],
+          "files": [
+            "image.bin"
+          ],
+          "addedLines": 0,
+          "deletedLines": 0,
+          "reasons": [
+            {
+              "type": "contiguous-segment",
+              "message": "Segmento contiguo di un ordine che rispetta le dipendenze note; dimensione, package, aree e affinità determinano il costo."
+            }
+          ]
+        },
+        {
+          "id": "slice_3396cbd3406880ca",
+          "title": "Aggiungi notes.md",
+          "unitIds": [
+            "cu_b28557d6c80469ad"
+          ],
+          "dependsOn": [],
+          "files": [
+            "notes.md"
+          ],
+          "addedLines": 1,
+          "deletedLines": 0,
+          "reasons": [
+            {
+              "type": "contiguous-segment",
+              "message": "Segmento contiguo di un ordine che rispetta le dipendenze note; dimensione, package, aree e affinità determinano il costo."
+            }
+          ]
+        }
+      ],
+      "cost": 26.5,
+      "reasons": [
+        {
+          "type": "planner-cost",
+          "message": "Costo euristico: dimensione, dispersione, affinità e numero di gruppi; non è una probabilità di correttezza.",
+          "details": {
+            "order": "path",
+            "boundedDynamicProgramming": false
+          }
+        }
+      ]
+    }
+  ],
+  "checks": {},
+  "warnings": [
+    {
+      "type": "excluded-opaque",
+      "message": "Excluded from semantic analysis; the complete file change remains in the reconstruction.",
+      "paths": [
+        "image.bin"
+      ]
+    },
+    {
+      "type": "excluded-opaque",
+      "message": "Excluded from semantic analysis; the complete file change remains in the reconstruction.",
+      "paths": [
+        "notes.md"
+      ]
+    },
+    {
+      "type": "semantic-unavailable",
+      "message": "One or both snapshots have no TypeScript/JavaScript project configuration; AST and direct imports are used for those files."
+    }
+  ],
+  "metrics": {
+    "reviewability": 100,
+    "structuralCohesion": 100,
+    "dependencyIntegrity": 100,
+    "boundaryConfidence": "low",
+    "verificationCoverage": {
+      "passed": 0,
+      "total": 0
+    }
+  },
+  "verification": {
+    "status": "not-run",
+    "level": "reconstructed",
+    "digest": "",
+    "trees": [],
+    "checks": {},
+    "commandsExecuted": false
+  },
+  "integrity": {
+    "finalTreeOid": "d955910222876e45794dd519ccd6bed62efb25a7",
+    "exactReconstruction": true,
+    "digest": "7faf067f93ea8123619f7a5b75390b05f7d10a827bb787efc0f1214f8a9303d7"
+  }
+}

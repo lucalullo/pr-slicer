@@ -1,0 +1,37 @@
+name: Bug report
+description: Report a reproducible PR Slicer problem without including private code or secrets.
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: PR Slicer, Node.js, Git, and operating-system versions.
+      placeholder: |
+        PR Slicer: 0.1.0
+        Node.js: 22.x
+        Git: 2.x
+        OS: Ubuntu / macOS / Windows
+    validations:
+      required: true
+  - type: textarea
+    id: command
+    attributes:
+      label: Command
+      description: The exact command you ran. Remove secrets and private paths where necessary.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Minimal reproduction
+      description: Describe the smallest safe reproduction, expected result, and observed result.
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional context
+      description: Add sanitized logs or other useful context.

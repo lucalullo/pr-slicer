@@ -1,0 +1,21 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { fixture } from '../fixtures/repository.mjs';
+import { createPlan, verifyPlan, normalizeConfig, planDigest, validatePlan } from '../../dist/index.js';
+import { calculateMetrics } from '../../dist/planner/scoring.js';
+test('repeated repairs bound titles and preserve original descriptive provenance', async t => {
+  const f = fixture(t, {}); for (const name of ['a','b','c']) f.write(`${name}.js`, `export const ${name} = 1;\n`); f.commit();
+  const config = normalizeConfig({ limits: { targetChangedLines: 1, hardMaxChangedLines: 1000 }, checks: [{ name: 'coherent', command: process.execPath, args: ['-e', 'const f=require("node:fs");if(["a.js","b.js","c.js"].filter(x=>f.existsSync(x)).length!==3)process.exit(7)'], timeoutMs: 5000 }] });
+  const p = createPlan({ repo: f.root, base: 'main', head: 'feature', mode: 'fast', config });
+  const titles = ['A','B','C'].map(letter => letter.repeat(750));
+  p.groups = p.units.map((u, i) => ({ id: `explicit-${i}`, title: titles[i], unitIds: [u.id], dependsOn: [], files: [u.newPath], addedLines: u.addedLines, deletedLines: u.deletedLines, reasons: [] }));
+  p.metrics = calculateMetrics(p.groups, p.units, p.edges, p.config); p.integrity.digest = planDigest(p);
+  const result = await verifyPlan(p, { runChecks: true });
+  assert.equal(result.verification.status, 'passed'); assert.equal(result.groups.length, 1);
+  assert.ok(result.groups[0].title.length <= 1000);
+  for (const title of titles) assert.ok(JSON.stringify(result.groups[0].reasons).includes(title));
+  assert.equal(p.groups.length, 3); validatePlan(result);
+  const again = await verifyPlan(p, { runChecks: true });
+  assert.equal(again.groups[0].title, result.groups[0].title);
+  assert.equal(again.integrity.digest, result.integrity.digest);
+});

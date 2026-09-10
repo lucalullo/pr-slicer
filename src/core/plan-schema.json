@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PR Slicer plan v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "toolVersion", "repository", "config", "analysisMode", "status", "files", "units", "edges", "groups", "candidates", "checks", "warnings", "metrics", "verification", "integrity"],
+  "properties": {
+    "schemaVersion": { "const": 1 }, "toolVersion": { "const": "0.1.0" },
+    "repository": { "$ref": "#/$defs/Repository" }, "config": { "$ref": "../config/schema.json" },
+    "analysisMode": { "enum": ["fast", "deep"] },
+    "status": { "enum": ["single-change", "split-recommended", "split-unverified", "split-verified", "cannot-safely-split"] },
+    "files": { "type": "array", "items": { "$ref": "#/$defs/FileChange" } },
+    "units": { "type": "array", "items": { "$ref": "#/$defs/ChangeUnit" } },
+    "edges": { "type": "array", "items": { "$ref": "#/$defs/ChangeEdge" } },
+    "groups": { "type": "array", "maxItems": 20, "items": { "$ref": "#/$defs/PlanGroup" } },
+    "candidates": { "type": "array", "maxItems": 5, "items": { "$ref": "#/$defs/Candidate" } },
+    "checks": { "$ref": "#/$defs/Checks" },
+    "warnings": { "type": "array", "items": { "$ref": "#/$defs/Evidence" } },
+    "metrics": { "$ref": "#/$defs/Metrics" }, "verification": { "$ref": "#/$defs/Verification" },
+    "integrity": {
+      "type": "object", "additionalProperties": false, "required": ["finalTreeOid", "exactReconstruction", "digest"],
+      "properties": { "finalTreeOid": { "$ref": "#/$defs/Oid" }, "exactReconstruction": { "const": true }, "digest": { "$ref": "#/$defs/Digest" } }
+    }
+  },
+  "$defs": {
+    "Id": { "type": "string", "minLength": 1, "maxLength": 1000, "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$(?![\\s\\S])" },
+    "Text": { "type": "string", "minLength": 1, "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f]*$" },
+    "Title": { "type": "string", "minLength": 1, "maxLength": 1000, "pattern": "^(?=.*\\S)[^\\u0000-\\u001f\\u007f-\\u009f]*$(?![\\s\\S])" },
+    "Path": { "type": ["string", "null"], "minLength": 1, "pattern": "^[^\\u0000]*$" },
+    "GitRef": { "type": "string", "minLength": 1, "pattern": "^[^\\u0000]*$" },
+    "Count": { "type": "integer", "minimum": 0, "maximum": 9007199254740991 },
+    "Oid": { "type": "string", "pattern": "^(?:[a-f0-9]{40}|[a-f0-9]{64})$(?![\\s\\S])" },
+    "Digest": { "type": "string", "pattern": "^[a-f0-9]{64}$(?![\\s\\S])" },
+    "Mode": { "enum": ["000000", "100644", "100755", "120000", "160000"] },
+    "ChangeKind": { "enum": ["add", "delete", "modify", "rename", "mode-change", "binary"] },
+    "IdList": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/Id" } },
+    "GitRange": {
+      "type": "object", "additionalProperties": false, "required": ["start", "count"],
+      "properties": { "start": { "$ref": "#/$defs/Count" }, "count": { "$ref": "#/$defs/Count" } }
+    },
+    "Evidence": {
+      "type": "object", "additionalProperties": false, "required": ["type", "message"],
+      "properties": {
+        "type": { "$ref": "#/$defs/Title" }, "message": { "$ref": "#/$defs/Text" }, "symbol": { "type": "string" },
+        "paths": { "type": "array", "items": { "type": "string", "minLength": 1, "pattern": "^[^\\u0000]*$" } }, "details": { "type": "object" }
+      }
+    },
+    "DiffHunk": {
+      "type": "object", "additionalProperties": false, "required": ["id", "oldPath", "newPath", "oldRange", "newRange", "lines", "binary"],
+      "properties": {
+        "id": { "$ref": "#/$defs/Id" }, "oldPath": { "$ref": "#/$defs/Path" }, "newPath": { "$ref": "#/$defs/Path" },
+        "oldRange": { "$ref": "#/$defs/GitRange" }, "newRange": { "$ref": "#/$defs/GitRange" },
+        "lines": { "type": "array", "items": { "type": "string" } }, "binary": { "type": "boolean" }
+      }
+    },
+    "FileChange": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "oldPath", "newPath", "oldOid", "newOid", "oldMode", "newMode", "changeKind", "hunks", "atomic", "addedLines", "deletedLines"],
+      "properties": {
+        "id": { "$ref": "#/$defs/Id" }, "oldPath": { "$ref": "#/$defs/Path" }, "newPath": { "$ref": "#/$defs/Path" },
+        "oldOid": { "$ref": "#/$defs/Oid" }, "newOid": { "$ref": "#/$defs/Oid" }, "oldMode": { "$ref": "#/$defs/Mode" }, "newMode": { "$ref": "#/$defs/Mode" },
+        "changeKind": { "$ref": "#/$defs/ChangeKind" }, "hunks": { "type": "array", "items": { "$ref": "#/$defs/DiffHunk" } }, "atomic": { "type": "boolean" },
+        "addedLines": { "$ref": "#/$defs/Count" }, "deletedLines": { "$ref": "#/$defs/Count" }, "renameScore": { "type": "integer", "minimum": 0, "maximum": 100 }
+      }
+    },
+    "Repository": {
+      "type": "object", "additionalProperties": false,
+      "required": ["root", "gitDir", "commonDir", "objectFormat", "baseRef", "headRef", "baseOid", "mergeBaseOid", "headOid", "baseTreeOid", "headTreeOid"],
+      "properties": {
+        "root": { "type": "string", "minLength": 1, "pattern": "^[^\\u0000]*$" }, "gitDir": { "type": "string", "minLength": 1, "pattern": "^[^\\u0000]*$" }, "commonDir": { "type": "string", "minLength": 1, "pattern": "^[^\\u0000]*$" },
+        "objectFormat": { "enum": ["sha1", "sha256"] }, "baseRef": { "$ref": "#/$defs/GitRef" }, "headRef": { "$ref": "#/$defs/GitRef" },
+        "baseOid": { "$ref": "#/$defs/Oid" }, "mergeBaseOid": { "$ref": "#/$defs/Oid" }, "headOid": { "$ref": "#/$defs/Oid" }, "baseTreeOid": { "$ref": "#/$defs/Oid" }, "headTreeOid": { "$ref": "#/$defs/Oid" }
+      }
+    },
+    "ChangeUnit": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "fileId", "changeKind", "syntaxKind", "oldPath", "newPath", "hunkIds", "symbolIds", "packageId", "area", "addedLines", "deletedLines", "isTest", "isGenerated", "isAtomic"],
+      "properties": {
+        "id": { "$ref": "#/$defs/Id" }, "fileId": { "$ref": "#/$defs/Id" }, "changeKind": { "$ref": "#/$defs/ChangeKind" },
+        "syntaxKind": { "enum": ["function", "method", "class", "interface", "type", "import", "export", "test", "module", "file"] },
+        "oldPath": { "$ref": "#/$defs/Path" }, "newPath": { "$ref": "#/$defs/Path" }, "hunkIds": { "$ref": "#/$defs/IdList" },
+        "symbolIds": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+        "packageId": { "type": ["string", "null"] }, "area": { "type": ["string", "null"] },
+        "addedLines": { "$ref": "#/$defs/Count" }, "deletedLines": { "$ref": "#/$defs/Count" },
+        "isTest": { "type": "boolean" }, "isGenerated": { "type": "boolean" }, "isAtomic": { "type": "boolean" }
+      }
+    },
+    "ChangeEdge": {
+      "type": "object", "additionalProperties": false, "required": ["id", "from", "to", "kind", "weight", "evidence"],
+      "properties": {
+        "id": { "$ref": "#/$defs/Id" }, "from": { "$ref": "#/$defs/Id" }, "to": { "$ref": "#/$defs/Id" },
+        "kind": { "enum": ["must_with", "before", "affinity", "separate", "unknown"] }, "weight": { "type": "number", "minimum": 0, "maximum": 100 },
+        "evidence": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/Evidence" } }
+      }
+    },
+    "PlanGroup": {
+      "type": "object", "additionalProperties": false, "required": ["id", "title", "unitIds", "dependsOn", "files", "addedLines", "deletedLines", "reasons"],
+      "properties": {
+        "id": { "$ref": "#/$defs/Id" }, "title": { "$ref": "#/$defs/Title" }, "unitIds": { "$ref": "#/$defs/IdList", "minItems": 1 }, "dependsOn": { "$ref": "#/$defs/IdList" },
+        "files": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1, "pattern": "^[^\\u0000]*$" } },
+        "addedLines": { "$ref": "#/$defs/Count" }, "deletedLines": { "$ref": "#/$defs/Count" }, "reasons": { "type": "array", "items": { "$ref": "#/$defs/Evidence" } }
+      }
+    },
+    "Candidate": {
+      "type": "object", "additionalProperties": false, "required": ["id", "groups", "cost", "reasons"],
+      "properties": {
+        "id": { "$ref": "#/$defs/Id" }, "groups": { "type": "array", "minItems": 1, "maxItems": 20, "items": { "$ref": "#/$defs/PlanGroup" } },
+        "cost": { "type": "number", "minimum": 0, "maximum": 9007199254740991 }, "reasons": { "type": "array", "items": { "$ref": "#/$defs/Evidence" } }
+      }
+    },
+    "CheckResult": {
+      "type": "object", "additionalProperties": false, "required": ["name", "status"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]*$(?![\\s\\S])" }, "status": { "enum": ["passed", "failed", "skipped", "unavailable", "timeout"] },
+        "exitCode": { "type": "integer", "minimum": 0, "maximum": 4294967295 }, "durationMs": { "$ref": "#/$defs/Count" },
+        "log": { "type": "string" }, "message": { "$ref": "#/$defs/Text" }
+      }
+    },
+    "Checks": { "type": "object", "additionalProperties": { "type": "array", "items": { "$ref": "#/$defs/CheckResult" } } },
+    "Verification": {
+      "type": "object", "additionalProperties": false, "required": ["status", "level", "digest", "trees", "checks", "commandsExecuted"],
+      "properties": {
+        "status": { "enum": ["not-run", "passed", "failed", "verification-unavailable"] }, "level": { "enum": ["reconstructed", "syntax", "semantic", "project"] },
+        "digest": { "type": "string", "pattern": "^(?:|[a-f0-9]{64})$(?![\\s\\S])" }, "trees": { "type": "array", "items": { "$ref": "#/$defs/Oid" } },
+        "checks": { "$ref": "#/$defs/Checks" }, "commandsExecuted": { "type": "boolean" }
+      }
+    },
+    "Metrics": {
+      "type": "object", "additionalProperties": false, "required": ["reviewability", "structuralCohesion", "dependencyIntegrity", "boundaryConfidence", "verificationCoverage"],
+      "properties": {
+        "reviewability": { "type": "number", "minimum": 0, "maximum": 100 }, "structuralCohesion": { "type": "number", "minimum": 0, "maximum": 100 }, "dependencyIntegrity": { "type": "number", "minimum": 0, "maximum": 100 },
+        "boundaryConfidence": { "enum": ["low", "medium", "high"] },
+        "verificationCoverage": { "type": "object", "additionalProperties": false, "required": ["passed", "total"], "properties": { "passed": { "$ref": "#/$defs/Count" }, "total": { "$ref": "#/$defs/Count" } } }
+      }
+    }
+  }
+}

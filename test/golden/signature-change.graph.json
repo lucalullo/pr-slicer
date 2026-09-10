@@ -1,0 +1,20 @@
+[
+  {
+    "id": "edge_29a954d087504cef",
+    "from": "cu_6cc26faa25b9d36b",
+    "to": "cu_a6e9cb25d697e624",
+    "kind": "must_with",
+    "weight": 100,
+    "evidence": [
+      {
+        "type": "incompatible-signature-change",
+        "message": "a.ts#api changes its signature; affected changed consumers remain in the same slice.",
+        "symbol": "a.ts#api",
+        "paths": [
+          "a.ts",
+          "b.ts"
+        ]
+      }
+    ]
+  }
+]

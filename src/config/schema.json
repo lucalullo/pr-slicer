@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "title": "PR Slicer configuration", "type": "object", "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" }, "schemaVersion": { "const": 1 }, "base": { "type": "string", "minLength": 1 }, "head": { "type": "string", "minLength": 1 }, "language": { "const": "typescript" },
+    "limits": { "type": "object", "additionalProperties": false, "properties": {
+      "maxGroups": { "type": "integer", "minimum": 1, "maximum": 20 }, "targetChangedLines": { "type": "integer", "minimum": 1 }, "hardMaxChangedLines": { "type": "integer", "minimum": 1 }, "targetFiles": { "type": "integer", "minimum": 1 }, "hardMaxFiles": { "type": "integer", "minimum": 1 }, "maxAnalysisFiles": { "type": "integer", "minimum": 1, "maximum": 20000 }, "maxFileBytes": { "type": "integer", "minimum": 1, "maximum": 104857600 }
+    } },
+    "paths": { "type": "object", "additionalProperties": false, "properties": { "include": { "$ref": "#/$defs/patterns" }, "exclude": { "$ref": "#/$defs/patterns" } } },
+    "relations": { "type": "object", "additionalProperties": false, "properties": {
+      "keepTestsWithImplementation": { "type": "boolean" }, "testPatterns": { "$ref": "#/$defs/patterns" }, "generatedPatterns": { "$ref": "#/$defs/patterns" },
+      "generatedFrom": { "type": "array", "items": { "type": "object", "additionalProperties": false, "required": ["source", "generated"], "properties": { "source": { "type": "string", "minLength": 1 }, "generated": { "$ref": "#/$defs/patterns" } } } }
+    } },
+    "areas": { "type": "array", "items": { "type": "object", "additionalProperties": false, "required": ["name", "patterns"], "properties": { "name": { "type": "string", "minLength": 1 }, "patterns": { "$ref": "#/$defs/patterns" } } } },
+    "checks": { "type": "array", "items": { "type": "object", "additionalProperties": false, "required": ["name", "command", "args", "timeoutMs"], "properties": { "name": { "type": "string", "minLength": 1 }, "command": { "type": "string", "minLength": 1 }, "args": { "type": "array", "items": { "type": "string" } }, "timeoutMs": { "type": "integer", "minimum": 1, "maximum": 3600000 } } } },
+    "environment": { "type": "object", "additionalProperties": false, "properties": { "inherit": { "type": "boolean" }, "allow": { "type": "array", "items": { "type": "string", "pattern": "^[A-Za-z_][A-Za-z0-9_]*$" } } } }
+  },
+  "$defs": { "patterns": { "type": "array", "items": { "type": "string", "minLength": 1 } } }
+}

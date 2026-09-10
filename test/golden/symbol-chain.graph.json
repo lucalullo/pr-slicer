@@ -1,0 +1,37 @@
+[
+  {
+    "id": "edge_dea61ebc8eb5f69d",
+    "from": "cu_06b271b8977a2a8c",
+    "to": "cu_221c37a3e82a9d05",
+    "kind": "before",
+    "weight": 95,
+    "evidence": [
+      {
+        "type": "new-module-import",
+        "message": "The imported module must exist before its changed importer.",
+        "paths": [
+          "types.ts",
+          "consumer.ts"
+        ]
+      },
+      {
+        "type": "new-symbol-reference",
+        "message": "types.ts#Model is introduced before its changed consumer.",
+        "symbol": "types.ts#Model",
+        "paths": [
+          "types.ts",
+          "consumer.ts"
+        ]
+      },
+      {
+        "type": "new-symbol-reference",
+        "message": "types.ts#Model.id is introduced before its changed consumer.",
+        "symbol": "types.ts#Model.id",
+        "paths": [
+          "types.ts",
+          "consumer.ts"
+        ]
+      }
+    ]
+  }
+]
