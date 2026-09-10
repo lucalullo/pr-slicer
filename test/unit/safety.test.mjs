@@ -25,7 +25,7 @@ test('path traversal and symlink confinement', t => {
   for (const value of ['../a', '/tmp/a', 'a/../b', 'a/.git/config', 'C:/x', 'a\\b', 'a\0b']) assert.throws(() => validateGitPath(value), /Unsafe/);
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'slicer-path-')); t.after(() => fs.rmSync(dir, { force: true, recursive: true }));
   if (process.platform !== 'win32') { fs.symlinkSync(os.tmpdir(), path.join(dir, 'escape')); assert.throws(() => safePath(dir, 'escape/file'), /Symlink/); }
-  assert.equal(safePath(dir, 'valid/è.txt'), path.join(dir, 'valid/è.txt'));
+  assert.equal(safePath(dir, 'valid/è.txt'), path.join(fs.realpathSync(dir), 'valid', 'è.txt'));
 });
 test('hunks preserve CRLF and missing final newline; malformed rejected', () => {
   const patch = '@@ -1 +1 @@\n-old\r\n+new\r\n@@ -3 +3 @@\n-tail\n\\ No newline at end of file\n+end\n\\ No newline at end of file\n';

@@ -136,16 +136,14 @@ test('atomic object transfer: failed publication after a complete object leaves 
 test('interrupted object publication leaves refs and the Git database valid', async t => {
   const f = fixture(t, { 'a.js': 'export const a = 1;\n' }); f.write('a.js', 'export const a = 2;\n'); f.commit();
   const verified = await verifyPlan(createPlan({ repo: f.root, base: 'main', head: 'feature', mode: 'fast', config: normalizeConfig({}) }));
-  const objects = path.join(f.root, '.git', 'objects'), refs = f.git('show-ref'), originalCopy = fs.copyFileSync, originalSpawn = childProcess.spawnSync;
-  const copy = t.mock.method(fs, 'copyFileSync', (source, target, flags) => {
-    if (String(source).includes(`${path.sep}objects${path.sep}`) && String(target).startsWith(`${objects}${path.sep}`)) {
-      fs.writeFileSync(target, fs.readFileSync(source).subarray(0, 3)); throw new Error('simulated write interruption');
-    }
-    return originalCopy(source, target, flags);
-  });
+  const objects = path.join(f.root, '.git', 'objects'), canonicalObjects = fs.realpathSync(objects), refs = f.git('show-ref'), originalSpawn = childProcess.spawnSync;
+  const isPrivateStage = stage => {
+    if (typeof stage !== 'string') return false;
+    try { const canonical = fs.realpathSync(stage), relative = path.relative(canonicalObjects, canonical); return relative !== '' && relative !== '..' && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative) && path.basename(canonical).startsWith('tmp_pr_slicer_'); } catch { return false; }
+  };
   const spawn = t.mock.method(childProcess, 'spawnSync', (command, args, options) => {
     const stage = options?.env?.GIT_OBJECT_DIRECTORY;
-    if (command === 'git' && args.includes('hash-object') && stage?.startsWith(`${objects}${path.sep}tmp_pr_slicer_`)) {
+    if (command === 'git' && args.includes('hash-object') && isPrivateStage(stage)) {
       fs.mkdirSync(path.join(stage, 'aa'), { recursive: true }); fs.writeFileSync(path.join(stage, 'aa', 'tmp_obj_interrupted'), 'partial');
       return { status: null, signal: 'SIGKILL', stdout: Buffer.alloc(0), stderr: Buffer.from('simulated write interruption') };
     }
@@ -153,7 +151,7 @@ test('interrupted object publication leaves refs and the Git database valid', as
   });
   syncBuiltinESMExports();
   try { assert.throws(() => materializePlan(verified, { prefix: 'interrupted' }), /simulated write interruption/); }
-  finally { copy.mock.restore(); spawn.mock.restore(); syncBuiltinESMExports(); }
+  finally { spawn.mock.restore(); syncBuiltinESMExports(); }
   assert.equal(f.git('show-ref'), refs);
   assert.doesNotThrow(() => f.git('fsck', '--full', '--strict'), 'interrupted writes must not publish truncated objects');
   assert.deepEqual(fs.readdirSync(objects).filter(name => name.startsWith('tmp_pr_slicer_')), []);

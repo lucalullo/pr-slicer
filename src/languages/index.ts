@@ -18,6 +18,7 @@ interface Snapshot { root: string; programs: ts.Program[]; sources: Map<string, 
 interface UnitFacts { unit: ChangeUnit; oldNodes: ts.Node[]; newNodes: ts.Node[]; oldDeclarations: Map<string, Declaration>; newDeclarations: Map<string, Declaration>; oldReferences: Set<string>; newReferences: Set<string>; oldNames: Set<string>; newNames: Set<string>; oldModules: Set<string>; newModules: Set<string> }
 const sourcePattern = /\.[cm]?[jt]sx?$/i;
 const slash = (value: string): string => value.split(path.sep).join('/');
+const canonicalRoot = (root: string): string => { try { return fs.realpathSync(path.resolve(root)); } catch { return path.resolve(root); } };
 const textOf = (node: ts.Node | undefined, source: ts.SourceFile): string => node ? node.getText(source).replace(/\s+/g, ' ').trim() : '';
 const unique = (items: string[]): string[] => [...new Set(items)].sort(compare);
 
@@ -172,10 +173,10 @@ function changedLines(hunks: DiffHunk[], prefix: string): number { return hunks.
 
 /** Build conservative AST units and evidence-backed dependency edges from immutable snapshots. */
 export function analyzeChanges(files: FileChange[], baseRoot: string, headRoot: string, config: Config, mode: 'fast' | 'deep'): AnalysisResult {
-  const coarse = files.length > config.limits.maxAnalysisFiles;
-  const basePrograms = mode === 'deep' && !coarse ? createSnapshotPrograms(baseRoot) : { programs: [], warnings: [], configured: false };
-  const headPrograms = mode === 'deep' && !coarse ? createSnapshotPrograms(headRoot) : { programs: [], warnings: [], configured: false };
-  const base: Snapshot = { root: baseRoot, programs: basePrograms.programs, warnings: basePrograms.warnings, sources: new Map() }, head: Snapshot = { root: headRoot, programs: headPrograms.programs, warnings: headPrograms.warnings, sources: new Map() };
+  const coarse = files.length > config.limits.maxAnalysisFiles, basePath = canonicalRoot(baseRoot), headPath = canonicalRoot(headRoot);
+  const basePrograms = mode === 'deep' && !coarse ? createSnapshotPrograms(basePath) : { programs: [], warnings: [], configured: false };
+  const headPrograms = mode === 'deep' && !coarse ? createSnapshotPrograms(headPath) : { programs: [], warnings: [], configured: false };
+  const base: Snapshot = { root: basePath, programs: basePrograms.programs, warnings: basePrograms.warnings, sources: new Map() }, head: Snapshot = { root: headPath, programs: headPrograms.programs, warnings: headPrograms.warnings, sources: new Map() };
   const warnings: Evidence[] = [...base.warnings, ...head.warnings], facts: UnitFacts[] = [];
   if (mode === 'fast') warnings.push({ type: 'analysis-fast', message: 'Fast analysis uses changed-file AST and direct imports; aliases, inferred types and transitive references are not fully resolved.' });
   if (mode === 'deep' && !coarse && (!basePrograms.configured || !headPrograms.configured)) warnings.push({ type: 'semantic-unavailable', message: 'One or both snapshots have no TypeScript/JavaScript project configuration; AST and direct imports are used for those files.' });

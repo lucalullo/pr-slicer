@@ -64,7 +64,7 @@ test('case-only rename is exact with Git case-insensitive matching enabled', asy
 test('Git slash paths resolve to native separators; backslash and drive escapes are rejected', t => {
   const f = fixture(t);
   assert.equal(validateGitPath('src/è/space name.ts'), 'src/è/space name.ts');
-  assert.equal(safePath(f.root, 'src/è/space name.ts'), path.join(f.root, 'src', 'è', 'space name.ts'));
+  assert.equal(safePath(f.root, 'src/è/space name.ts'), path.join(fs.realpathSync(f.root), 'src', 'è', 'space name.ts'));
   for (const name of ['src\\file.ts', '..\\outside', 'C:\\outside', 'C:/outside', '\\\\server\\share']) {
     assert.throws(() => safePath(f.root, name), error => error.code === 'UNSAFE_PATH');
   }

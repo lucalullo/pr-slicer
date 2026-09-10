@@ -42,6 +42,16 @@ export function resolveRepository(repo: string, base: string, head: string): Rep
 
 export function assertClean(repository: Repository): void {
   const dirty = (): never => { throw new SlicerError('Materialization requires a clean working tree and index, including untracked files.', 'DIRTY_WORKTREE'); };
+  const regularOid = (target: string, mode?: string): string => {
+    const descriptor = openSync(target, constants.O_RDONLY | (constants.O_NOFOLLOW ?? 0));
+    try {
+      const info = fstatSync(descriptor);
+      if (!info.isFile() || mode && process.platform !== 'win32' && ((info.mode & 0o111) !== 0) !== (mode === '100755')) dirty();
+      const hash = createHash(repository.objectFormat).update(Buffer.from(`blob ${info.size}\0`)), chunk = Buffer.allocUnsafe(64 * 1024);
+      for (;;) { const count = readSync(descriptor, chunk); if (!count) break; hash.update(chunk.subarray(0, count)); }
+      return hash.digest('hex');
+    } finally { closeSync(descriptor); }
+  };
   if (git(repository.root, ['diff', '--cached', '--raw', '-z', '--no-ext-diff', '--no-textconv', 'HEAD', '--']).length || git(repository.root, ['ls-files', '--others', '--exclude-standard', '-z']).length) dirty();
   // Read bytes directly: `git status` can execute clean filters configured by a repository.
   for (const record of git(repository.root, ['ls-files', '--stage', '-z']).toString('utf8').split('\0')) {
@@ -55,19 +65,14 @@ export function assertClean(repository: Repository): void {
       const parent = dirname(name); if (parent !== '.') safePath(repository.root, parent);
       const target = join(repository.root, name), stat = lstatSync(target);
       if (mode === '120000') {
-        if (!stat.isSymbolicLink()) dirty();
-        const content = readlinkSync(target, { encoding: 'buffer' });
-        actual = createHash(repository.objectFormat).update(Buffer.from(`blob ${content.length}\0`)).update(content).digest('hex');
+        if (stat.isSymbolicLink()) {
+          const content = readlinkSync(target, { encoding: 'buffer' });
+          actual = createHash(repository.objectFormat).update(Buffer.from(`blob ${content.length}\0`)).update(content).digest('hex');
+        } else if (process.platform === 'win32' && stat.isFile()) actual = regularOid(target); // Git for Windows may check out symlinks as plain link-text files when core.symlinks=false.
+        else dirty();
       } else {
         if (!stat.isFile() || stat.isSymbolicLink()) dirty();
-        const descriptor = openSync(target, constants.O_RDONLY | (constants.O_NOFOLLOW ?? 0));
-        try {
-          const info = fstatSync(descriptor);
-          if (!info.isFile() || process.platform !== 'win32' && ((info.mode & 0o111) !== 0) !== (mode === '100755')) dirty();
-          const hash = createHash(repository.objectFormat).update(Buffer.from(`blob ${info.size}\0`)), chunk = Buffer.allocUnsafe(64 * 1024);
-          for (;;) { const count = readSync(descriptor, chunk); if (!count) break; hash.update(chunk.subarray(0, count)); }
-          actual = hash.digest('hex');
-        } finally { closeSync(descriptor); }
+        actual = regularOid(target, mode);
       }
     } catch { dirty(); }
     if (actual! !== oid) dirty();
