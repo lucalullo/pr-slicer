@@ -136,11 +136,11 @@ test('atomic object transfer: failed publication after a complete object leaves 
 test('interrupted object publication leaves refs and the Git database valid', async t => {
   const f = fixture(t, { 'a.js': 'export const a = 1;\n' }); f.write('a.js', 'export const a = 2;\n'); f.commit();
   const verified = await verifyPlan(createPlan({ repo: f.root, base: 'main', head: 'feature', mode: 'fast', config: normalizeConfig({}) }));
-  const objects = path.join(f.root, '.git', 'objects'), canonicalObjects = fs.realpathSync(objects), refs = f.git('show-ref'), originalSpawn = childProcess.spawnSync;
-  const isPrivateStage = stage => {
-    if (typeof stage !== 'string') return false;
-    try { const canonical = fs.realpathSync(stage), relative = path.relative(canonicalObjects, canonical); return relative !== '' && relative !== '..' && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative) && path.basename(canonical).startsWith('tmp_pr_slicer_'); } catch { return false; }
-  };
+  const objects = path.join(f.root, '.git', 'objects'), refs = f.git('show-ref'), originalSpawn = childProcess.spawnSync;
+  // `persistObjects` creates its private stage as <git-objects>/tmp_pr_slicer_*.
+  // Checking the stage basename avoids realpath/junction spelling differences on Windows,
+  // while still distinguishing it from createSandbox's .../pr-slicer-*/objects directory.
+  const isPrivateStage = stage => typeof stage === 'string' && path.basename(path.normalize(stage)).startsWith('tmp_pr_slicer_');
   const spawn = t.mock.method(childProcess, 'spawnSync', (command, args, options) => {
     const stage = options?.env?.GIT_OBJECT_DIRECTORY;
     if (command === 'git' && args.includes('hash-object') && isPrivateStage(stage)) {
