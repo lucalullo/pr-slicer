@@ -1,26 +1,100 @@
 # PR Slicer
 
-**Turn one oversized Git change into smaller, dependency-aware changes you can actually review.**
-
 PR Slicer is a local, deterministic CLI for JavaScript and TypeScript repositories. It analyzes a
-committed Git change, finds conservative slice boundaries, proves that the complete stack reconstructs
-the original `HEAD` exactly, and can materialize the result as ordered local branches.
+committed Git change, finds conservative slice boundaries, verifies that the complete stack
+reconstructs the original `HEAD` exactly, and can materialize the result as ordered local branches.
 
-**No AI. No cloud. No account. No code upload.**
+PR Slicer 0.1.0 is an experimental pre-1.0 release intended for local evaluation and practical use on
+non-critical repositories. It does not claim to prove functional correctness or to find a safe split
+for every change.
 
-After installation:
+**No AI, cloud service, GitHub API, telemetry, or code upload is required.**
+
+## Highlights in 0.1.0
+
+- one-command analysis with `pr-slicer plan`;
+- JavaScript and TypeScript support for `.js`, `.jsx`, `.ts`, `.tsx`, `.mjs`, `.cjs`, `.mts`, and `.cts`;
+- exact Git hunk preservation instead of source regeneration;
+- AST and TypeScript Compiler API analysis for declarations, imports, exports, symbols, and references;
+- hard `must_with` constraints, ordered `before` relations, and soft structural affinity;
+- deterministic grouping, topological ordering, candidate generation, and scoring;
+- conservative fallback to one group when a safe split cannot be justified;
+- exact final-tree reconstruction before a plan is accepted;
+- prefix-by-prefix syntax verification and optional TypeScript semantic diagnostics;
+- optional local project checks such as tests, lint, or builds, executed only when explicitly authorized;
+- bounded repair by merging adjacent groups when an intermediate boundary fails verification;
+- deterministic commits and atomic local branch creation through Git plumbing;
+- terminal, JSON, and Markdown reports;
+- `doctor` and `explain` commands for environment and decision inspection;
+- no remote fetch, automatic push, background service, or implicit project-code execution;
+- Node.js 22+ and Git 2.38+.
+
+The planner is deliberately conservative: a larger valid group is preferable to a smaller split that
+cannot be justified safely.
+
+## Installation
+
+Requirements are Node.js 22+ and Git 2.38+.
+
+From GitHub:
+
+```bash
+git clone https://github.com/lucalullo/pr-slicer.git
+cd pr-slicer
+npm ci --ignore-scripts
+npm run build
+npm link --ignore-scripts
+```
+
+Then, from the repository you want to analyze:
 
 ```bash
 pr-slicer plan
 ```
 
-By default, PR Slicer analyzes the current repository from `main` to `HEAD`.
+If the npm package is available:
 
-A large change can become:
+```bash
+npm install --global pr-slicer
+pr-slicer plan
+```
+
+Or without a global installation:
+
+```bash
+npx pr-slicer plan
+```
+
+The npm installation itself requires network access. PR Slicer does not use the network while
+analyzing, verifying, or materializing a repository.
+
+If a `pr-slicer-0.1.0.tgz` asset is attached to the GitHub release:
+
+```bash
+npm install --global ./pr-slicer-0.1.0.tgz
+pr-slicer --version
+```
+
+The runtime package has one dependency: TypeScript 5.9.3.
+
+## Quick start
+
+From a feature branch with committed changes relative to `main`:
+
+```bash
+pr-slicer plan
+```
+
+By default PR Slicer analyzes:
 
 ```text
-PR Slicer
+base = main
+head = HEAD
+```
 
+A large change can produce a plan like:
+
+```text
 34 changed files · 1,842 changed lines
 Recommended split: 3 groups
 
@@ -38,81 +112,7 @@ Recommended split: 3 groups
 ✓ No changes invented
 ```
 
-PR Slicer 0.1.0 is an experimental pre-1.0 release. Use it first on non-critical repositories and
-review every proposed stack before relying on it in production.
-
-## Why PR Slicer
-
-Large pull requests are hard to review even when the code is correct. A single change can mix schema
-work, refactoring, backend behavior, frontend updates, tests, generated files, and cleanup.
-
-Most repository analyzers return statistics. Most code-review tools return comments.
-
-PR Slicer returns something different:
-
-> **A concrete, ordered decomposition of the original Git change that can be reconstructed and
-> verified locally.**
-
-It is designed to answer one question:
-
-> **Can this change be split into smaller reviewable units without changing the final result?**
-
-When the available evidence is not strong enough, the correct result is simply:
-
-```text
-No safe split found.
-Keep this change as one group.
-```
-
-## Highlights in 0.1.0
-
-- one-command analysis with `pr-slicer plan`;
-- JavaScript and TypeScript support for `.js`, `.jsx`, `.ts`, `.tsx`, `.mjs`, `.cjs`, `.mts`, and `.cts`;
-- exact Git hunk preservation instead of source regeneration;
-- AST and TypeScript Compiler API analysis for declarations, imports, exports, symbols, and references;
-- hard `must_with` constraints, ordered `before` relations, and soft structural affinity;
-- deterministic grouping, topological ordering, candidate generation, and scoring;
-- conservative fallback to one group when a safe split cannot be justified;
-- exact final-tree reconstruction before a plan is accepted;
-- prefix-by-prefix syntax verification and optional TypeScript semantic diagnostics;
-- optional project checks such as tests, lint, or builds, executed only when explicitly authorized;
-- bounded repair by merging adjacent groups when an intermediate boundary fails verification;
-- deterministic commits and atomic local branch creation through Git plumbing;
-- terminal, JSON, and Markdown reports;
-- `doctor` and `explain` commands for environment checks and decision inspection;
-- no GitHub API, LLM, telemetry, remote fetch, automatic push, or background service;
-- Node.js 22+ and Git 2.38+.
-
-The planner is deliberately conservative: a larger valid group is preferable to a smaller split that
-cannot be justified safely.
-
-## Try it in 30 seconds
-
-Requirements:
-
-- Node.js 22 or newer;
-- Git 2.38 or newer;
-- a local JavaScript or TypeScript repository;
-- committed changes between `main` and `HEAD`.
-
-Install PR Slicer from a local checkout:
-
-```bash
-git clone https://github.com/lucalullo/pr-slicer.git
-cd pr-slicer
-npm ci --ignore-scripts
-npm run build
-npm link --ignore-scripts
-```
-
-Then, from your feature branch:
-
-```bash
-cd /path/to/my-project
-pr-slicer plan
-```
-
-If the base branch is not `main`:
+If the base branch is different:
 
 ```bash
 pr-slicer plan --base develop
@@ -124,49 +124,7 @@ For a faster structural pass on a large repository:
 pr-slicer plan --fast
 ```
 
-`plan` does not run your build, tests, package scripts, hooks, or project code.
-
-## Installation
-
-### Local checkout
-
-```bash
-git clone https://github.com/lucalullo/pr-slicer.git
-cd pr-slicer
-npm ci --ignore-scripts
-npm run build
-npm link --ignore-scripts
-pr-slicer plan
-```
-
-### npm
-
-Once the package is published on npm:
-
-```bash
-npm install --global pr-slicer
-pr-slicer plan
-```
-
-Or without a global installation:
-
-```bash
-npx pr-slicer plan
-```
-
-The npm installation itself requires network access. **PR Slicer does not use the network while
-analyzing, verifying, or materializing a repository.**
-
-### GitHub release package
-
-If a `pr-slicer-0.1.0.tgz` asset is attached to the `v0.1.0` release, install it with:
-
-```bash
-npm install --global ./pr-slicer-0.1.0.tgz
-pr-slicer --version
-```
-
-The runtime package has one dependency: TypeScript 5.9.3.
+`plan` does not run builds, tests, package scripts, hooks, or project code.
 
 ## Core workflow
 
@@ -622,11 +580,11 @@ CI is configured for Ubuntu, macOS, and Windows on Node.js 22 and 24.
 - large repositories may use reduced or sampled analysis to remain bounded;
 - a single-group result can be the correct result when no safe split is supported by the available evidence.
 
-## Release status
+## Status
 
-PR Slicer 0.1.0 is an **Experimental / Technical Preview**.
+PR Slicer 0.1.0 is experimental and pre-1.0. The planner, verification model, and public API may evolve as broader real-world validation continues.
 
-The main correctness target is deliberately narrow and testable:
+The main correctness target for this release is deliberately narrow and testable:
 
 > **When PR Slicer proposes and materializes a verified stack, the complete stack must reconstruct the
 > original Git head tree exactly.**
